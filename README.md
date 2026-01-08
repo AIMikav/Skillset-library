@@ -10,12 +10,20 @@ Skills are specialized tools in Claude Code that provide domain-specific capabil
 
 ```
 skillset-library/
+├── .claude/
+│   └── .mcp.json                  # Kubernetes MCP server configuration
 ├── skills/
 │   ├── productivity/              # Skills for task management, note-taking, etc.
 │   │   └── meeting-notes-analyzer.md
-│   └── development/               # Skills for code setup, testing, documentation
-│       └── github-setup.md
+│   ├── development/               # Skills for code setup, testing, documentation
+│   │   └── github-setup.md
+│   └── infrastructure/            # Skills for Kubernetes, OpenShift, policy management
+│       └── cluster-policy-analyzer/
+│           ├── SKILL.md
+│           └── README.md
 ├── README.md
+├── MCP_SETUP_GUIDE.md
+├── TEAM_SHARING.md
 └── .gitignore
 ```
 
@@ -98,6 +106,43 @@ Example: "Analyze my meeting notes from ~/Documents/team-sync.txt"
 
 ---
 
+### Infrastructure Skills
+
+#### cluster-policy-analyzer
+**Purpose:** Real-time discovery and analysis of Kubernetes/OpenShift clusters using the Kubernetes MCP server
+
+**What it does:**
+- Discovers all Custom Resource Definitions (CRDs) in any cluster
+- Analyzes Gatekeeper/OPA policy configurations
+- Generates Rego policies for resource validation
+- Debugs policy violations
+- Provides multi-cluster support (dev, staging, prod)
+
+**Usage:**
+```
+Point Claude to analyze your cluster
+Examples:
+- "Analyze my cluster's policy configuration"
+- "What CRDs are installed in my cluster?"
+- "Generate a policy to require team labels on pods"
+- "Why is my deployment being rejected?"
+```
+
+**Key Features:**
+- Dynamic real-time cluster queries via kubectl
+- Works with any Kubernetes/OpenShift cluster
+- Context-aware (adapts to active kubectl context)
+- Generates ConstraintTemplates with Rego code
+- Pattern library for common validation policies
+- Violation debugging and troubleshooting
+
+**Requirements:**
+- Kubernetes MCP server (configured in `.claude/.mcp.json`)
+- kubectl with cluster access
+- See [MCP_SETUP_GUIDE.md](MCP_SETUP_GUIDE.md) for setup
+
+---
+
 ## Creating Your Own Skills
 
 Each skill is a markdown file with the following structure:
@@ -168,14 +213,37 @@ When creating new skills:
 
 MIT License - feel free to use and modify these skills for your needs.
 
+## MCP Server Integration
+
+This repository includes **Kubernetes MCP Server** configuration for real-time cluster analysis:
+
+**What is MCP?**
+Model Context Protocol enables Claude to interact with external systems (like Kubernetes clusters) through standardized tool interfaces.
+
+**Setup:**
+1. The `.claude/.mcp.json` file is version-controlled in this repo
+2. When team members clone the repo, MCP server auto-downloads via npx
+3. No manual installation required - just Node.js 16+ and kubectl
+
+**See:** [MCP_SETUP_GUIDE.md](MCP_SETUP_GUIDE.md) and [TEAM_SHARING.md](TEAM_SHARING.md) for complete setup instructions
+
+## Supported Platforms
+
+- **Kubernetes** (all distributions: vanilla, minikube, kind, k3s)
+- **OpenShift** 3.x and 4.x
+- **Cloud Platforms**: GKE, EKS, AKS, DOKS
+- **Gatekeeper/OPA** for policy enforcement
+
 ## Roadmap
 
 Future skills under consideration:
+- ~~Kubernetes cluster policy analyzer~~ ✅ Added!
+- Terraform infrastructure analyzer
+- Helm chart generator
+- Prometheus metrics analyzer
+- Service mesh policy generator
 - Code reviewer with security checks
 - Test generator
-- Documentation generator
 - Daily standup report creator
-- Database schema analyzer
-- API endpoint documentation tool
 
 Suggestions and contributions welcome!

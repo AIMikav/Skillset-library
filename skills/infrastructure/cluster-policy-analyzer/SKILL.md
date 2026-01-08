@@ -520,11 +520,11 @@ oc get routes -A
 
 This skill leverages the MCP server to provide:
 
-✅ **Live Cluster State** - Always current, never stale
-✅ **Multi-Cluster Support** - Works with any configured context
-✅ **Dynamic Discovery** - Adapts to any CRD schema
-✅ **Cross-Platform** - Kubernetes, OpenShift, GKE, EKS, AKS
-✅ **No Pre-Configuration** - Discovers cluster state on-demand
+ **Live Cluster State** - Always current, never stale
+ **Multi-Cluster Support** - Works with any configured context
+ **Dynamic Discovery** - Adapts to any CRD schema
+ **Cross-Platform** - Kubernetes, OpenShift, GKE, EKS, AKS
+ **No Pre-Configuration** - Discovers cluster state on-demand
 
 ## Example Usage Scenarios
 

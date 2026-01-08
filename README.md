@@ -237,7 +237,7 @@ Model Context Protocol enables Claude to interact with external systems (like Ku
 ## Roadmap
 
 Future skills under consideration:
-- ~~Kubernetes cluster policy analyzer~~ ✅ Added!
+- ~~Kubernetes cluster policy analyzer~~  Added!
 - Terraform infrastructure analyzer
 - Helm chart generator
 - Prometheus metrics analyzer

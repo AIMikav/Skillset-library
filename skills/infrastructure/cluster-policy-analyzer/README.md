@@ -25,13 +25,13 @@ This skill enables Claude to dynamically analyze any Kubernetes or OpenShift clu
 #### Step 1: Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd openshift-policy-skills
+git clone https://github.com/AIMikav/Skillset-library.git
+cd Skillset-library
 ```
 
 #### Step 2: Configure MCP Server
 
-The MCP server configuration is already set up in `.claude/.mcp.json`:
+The MCP server configuration is already set up in `.claude/.mcp.json` at the repository root:
 
 ```json
 {
@@ -69,8 +69,8 @@ kubectl config get-contexts
 The skill will be automatically available when you start Claude Code in this directory:
 
 ```bash
-# Navigate to project directory
-cd /path/to/openshift-policy-skills
+# Navigate to repository directory
+cd Skillset-library
 
 # Start Claude Code
 claude
@@ -162,25 +162,25 @@ Claude executes kubectl commands in real-time to:
 
 ## Skill Capabilities
 
-### ✅ Cluster Discovery
+### Cluster Discovery
 - List all CRDs with grouping by API group
 - Identify cluster type (Kubernetes, OpenShift, managed cloud)
 - Discover namespaces and their organization
 - Find Gatekeeper/OPA installation
 
-### ✅ Policy Analysis
+### Policy Analysis
 - List all ConstraintTemplates
 - Extract and explain Rego policies
 - Show active Constraints and their configuration
 - Display violations with context
 
-### ✅ Policy Generation
+### Policy Generation
 - Create ConstraintTemplates with custom Rego
 - Generate Constraint instances with proper scoping
 - Follow cluster-specific patterns
 - Include parameter schemas
 
-### ✅ Troubleshooting
+### Troubleshooting
 - Debug policy compilation errors
 - Explain violation messages
 - Suggest fixes for rejected resources
@@ -188,22 +188,21 @@ Claude executes kubectl commands in real-time to:
 
 ## Supported Cluster Types
 
-- ✅ **Minikube** - Local development clusters
-- ✅ **OpenShift** - Red Hat OpenShift (3.x, 4.x)
-- ✅ **GKE** - Google Kubernetes Engine
-- ✅ **EKS** - Amazon Elastic Kubernetes Service
-- ✅ **AKS** - Azure Kubernetes Service
-- ✅ **Rancher** - Rancher-managed clusters
-- ✅ **Kind** - Kubernetes in Docker
-- ✅ **K3s** - Lightweight Kubernetes
+- **Minikube** - Local development clusters
+-  **OpenShift** - Red Hat OpenShift (3.x, 4.x)
+-  **GKE** - Google Kubernetes Engine
+-  **EKS** - Amazon Elastic Kubernetes Service
+-  **AKS** - Azure Kubernetes Service
+-  **Rancher** - Rancher-managed clusters
+-  **Kind** - Kubernetes in Docker
+-  **K3s** - Lightweight Kubernetes
 
 ## File Structure
 
 ```
-.claude/skills/cluster-policy-analyzer/
+skills/infrastructure/cluster-policy-analyzer/
 ├── SKILL.md              # Main skill file (Claude's instructions)
-├── README.md             # This file (team documentation)
-└── SETUP.md              # Detailed setup guide
+└── README.md             # This file (team documentation)
 ```
 
 ## Advanced Usage
@@ -265,7 +264,7 @@ The skill guides Claude to:
 **Solutions**:
 1. Mention keywords: "analyze cluster", "CRDs", "Gatekeeper", "policy"
 2. Explicitly ask: "Use the cluster-policy-analyzer skill"
-3. Verify skill file exists: `ls .claude/skills/cluster-policy-analyzer/SKILL.md`
+3. Verify skill file exists: `ls skills/infrastructure/cluster-policy-analyzer/SKILL.md`
 
 ## Sharing with Team
 
@@ -274,8 +273,8 @@ The skill guides Claude to:
 This skill is version-controlled and automatically shared when team members clone the repository:
 
 ```bash
-git clone <repository-url>
-cd openshift-policy-skills
+git clone https://github.com/AIMikav/Skillset-library.git
+cd Skillset-library
 claude  # Skill is immediately available
 ```
 
@@ -290,7 +289,7 @@ Teams can customize the skill by editing `SKILL.md`:
 **After customization**, commit and push:
 
 ```bash
-git add .claude/skills/cluster-policy-analyzer/SKILL.md
+git add skills/infrastructure/cluster-policy-analyzer/SKILL.md
 git commit -m "Add custom policy patterns"
 git push
 ```
@@ -320,7 +319,7 @@ Have policy changes reviewed like code changes.
 To improve this skill:
 
 1. **Fork or branch** the repository
-2. **Edit** `.claude/skills/cluster-policy-analyzer/SKILL.md`
+2. **Edit** `skills/infrastructure/cluster-policy-analyzer/SKILL.md`
 3. **Test** your changes with Claude Code
 4. **Submit** a pull request or merge to main
 5. **Document** what you changed
@@ -336,9 +335,9 @@ To improve this skill:
 
 For issues or questions:
 - **Check logs**: Claude shows all kubectl commands it executes
-- **Review docs**: Read SETUP.md for detailed configuration
+- **Review docs**: See [MCP_SETUP_GUIDE.md](../../../MCP_SETUP_GUIDE.md) and [TEAM_SHARING.md](../../../TEAM_SHARING.md)
 - **Team channel**: Post in your team's support channel
-- **File issue**: Create an issue in the repository
+- **File issue**: Create an issue in the [repository](https://github.com/AIMikav/Skillset-library/issues)
 
 ## Version History
 

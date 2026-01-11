@@ -1,55 +1,50 @@
-# Cluster Policy Analyzer Skill
+# Cluster Policy Analyzer
 
-A reusable Claude Code skill for real-time discovery and analysis of Kubernetes/OpenShift clusters, CRDs, and OPA/Gatekeeper policies.
+A Claude Code skill for analyzing Kubernetes/OpenShift cluster configurations, CRDs, and OPA/Gatekeeper policies using the Kubernetes MCP server.
 
 ## Overview
 
-This skill enables Claude to dynamically analyze any Kubernetes or OpenShift cluster you have access to, providing:
+This skill analyzes your Kubernetes or OpenShift cluster to provide:
+- **CRD Discovery** - Complete inventory of Custom Resource Definitions
+- **Policy Analysis** - Gatekeeper ConstraintTemplates and active Constraints
+- **Violation Debugging** - Understanding policy violations and their causes
+- **Cluster Summarization** - Clear summaries of cluster configuration
 
-- **Real-time cluster discovery** - CRDs, namespaces, resources
-- **Policy analysis** - Gatekeeper ConstraintTemplates and Constraints
-- **Rego generation** - Custom policy creation based on your requirements
-- **Violation debugging** - Understanding and fixing policy violations
-- **Multi-cluster support** - Works with any kubectl context
-
-## Quick Start
-
-### Prerequisites
+## Prerequisites
 
 1. **kubectl** or **oc** CLI installed and configured
-2. **Active cluster context** - pointing to your cluster
-3. **Kubernetes MCP Server** - configured in your project
+2. **Active cluster context** pointing to your cluster
+3. **Kubernetes MCP Server** configured for Claude
 
-### Setup for Team Members
+## Setup
 
-#### Step 1: Clone the Repository
+### Step 1: Install Kubernetes MCP Server
+
+Add the Kubernetes MCP server to Claude using:
 
 ```bash
-git clone https://github.com/AIMikav/Skillset-library.git
-cd Skillset-library
+claude mcp add kubernetes --scope user -- npx -y kubernetes-mcp-server@latest
 ```
 
-#### Step 2: Configure MCP Server
+This configures the MCP server for your user profile, making it available to all Claude Code sessions.
 
-The MCP server configuration is already set up in `.claude/.mcp.json` at the repository root:
+**Verify Installation:**
+```bash
+# Check MCP configuration
+cat ~/.claude/mcp.json
 
-```json
+# You should see:
 {
   "mcpServers": {
     "kubernetes": {
       "command": "npx",
-      "args": [
-        "-y",
-        "kubernetes-mcp-server@latest"
-      ]
+      "args": ["-y", "kubernetes-mcp-server@latest"]
     }
   }
 }
 ```
 
-This configuration is **version-controlled** and works for all team members.
-
-#### Step 3: Verify kubectl Access
+### Step 2: Configure kubectl Access
 
 Ensure you have access to a Kubernetes/OpenShift cluster:
 
@@ -60,25 +55,72 @@ kubectl config current-context
 # Verify cluster access
 kubectl cluster-info
 
-# List contexts (if you have multiple clusters)
+# List available contexts
 kubectl config get-contexts
 ```
 
-#### Step 4: Start Claude Code
+### Step 3: Start Claude Code
 
-The skill will be automatically available when you start Claude Code in this directory:
+The skill is automatically available when you start Claude Code:
 
 ```bash
-# Navigate to repository directory
-cd Skillset-library
-
-# Start Claude Code
 claude
 ```
 
-### Switching Clusters
+## Usage
 
-To analyze different clusters, simply switch your kubectl context:
+### Example 1: Analyze Cluster CRDs
+
+```
+You: What CRDs are installed in my cluster?
+```
+
+**Claude will:**
+- List all Custom Resource Definitions
+- Group them by API group (gatekeeper.sh, openshift.io, etc.)
+- Identify policy-related CRDs
+- Provide a summary of cluster capabilities
+
+### Example 2: Analyze Gatekeeper Policies
+
+```
+You: Analyze my cluster's policy configuration
+```
+
+**Claude will:**
+- Discover ConstraintTemplates
+- List active Constraints
+- Show total violations
+- Summarize enforcement actions
+
+### Example 3: Debug Policy Violations
+
+```
+You: I have 8 violations for the teamlabel policy. Help me understand why.
+```
+
+**Claude will:**
+- Retrieve the ConstraintTemplate and Constraint
+- Analyze the Rego policy logic
+- Show specific violations with resource names
+- Explain why resources were rejected
+- Suggest remediation steps
+
+### Example 4: OpenShift Cluster Analysis
+
+```
+You: Analyze my OpenShift cluster
+```
+
+**Claude will:**
+- Identify OpenShift-specific CRDs (Routes, Builds, ImageStreams)
+- Analyze Security Context Constraints (SCCs)
+- Summarize OpenShift resources
+- Provide OpenShift-specific recommendations
+
+## Switching Clusters
+
+To analyze different clusters, switch your kubectl context:
 
 ```bash
 # List available contexts
@@ -90,265 +132,156 @@ kubectl config use-context <context-name>
 # Verify switch
 kubectl config current-context
 
-# Now ask Claude to analyze the cluster
-# "Analyze my cluster's policy configuration"
+# Analyze the new cluster
 ```
 
-## Usage Examples
-
-### Example 1: Discover Cluster CRDs
-
-```
-You: What CRDs are installed in my cluster?
-
-Claude: [Uses skill to run kubectl get crds and provides analysis]
-```
-
-### Example 2: Analyze Gatekeeper Policies
-
-```
-You: Show me all Gatekeeper policies in my cluster
-
-Claude: [Discovers ConstraintTemplates, active Constraints, and violations]
-```
-
-### Example 3: Generate a New Policy
-
-```
-You: Create a Gatekeeper policy to require memory limits on all containers
-
-Claude: [Analyzes existing patterns, generates ConstraintTemplate with Rego,
-         creates Constraint YAML, provides testing instructions]
-```
-
-### Example 4: Debug Violations
-
-```
-You: I have 8 violations for teamlabel policy. Help me understand why.
-
-Claude: [Retrieves policy, analyzes violations, explains cause, suggests fixes]
-```
-
-### Example 5: Compare Environments
-
-```
-You: Compare the policies between dev and prod clusters
-
-# First, switch to dev
-kubectl config use-context dev-cluster
-
-You: Analyze dev cluster policies
-
-# Then switch to prod
-kubectl config use-context prod-cluster
-
-You: Analyze prod cluster policies and compare with dev
-```
+Then ask Claude to analyze the cluster.
 
 ## How It Works
 
-The skill provides Claude with:
+The skill uses the Kubernetes MCP server to execute these steps:
 
-1. **Discovery Workflow** - Step-by-step commands to analyze clusters
-2. **Rego Pattern Library** - Common policy patterns to use as templates
-3. **Best Practices** - Guidelines for policy creation and enforcement
-4. **Debugging Techniques** - How to troubleshoot policy issues
-
-Claude executes kubectl commands in real-time to:
-- List CRDs and understand cluster capabilities
-- Retrieve ConstraintTemplate YAML and extract Rego code
-- Find active Constraints and their violations
-- Analyze resource instances for context
-
-## Skill Capabilities
-
-### Cluster Discovery
-- List all CRDs with grouping by API group
-- Identify cluster type (Kubernetes, OpenShift, managed cloud)
-- Discover namespaces and their organization
-- Find Gatekeeper/OPA installation
-
-### Policy Analysis
-- List all ConstraintTemplates
-- Extract and explain Rego policies
-- Show active Constraints and their configuration
-- Display violations with context
-
-### Policy Generation
-- Create ConstraintTemplates with custom Rego
-- Generate Constraint instances with proper scoping
-- Follow cluster-specific patterns
-- Include parameter schemas
-
-### Troubleshooting
-- Debug policy compilation errors
-- Explain violation messages
-- Suggest fixes for rejected resources
-- Analyze Gatekeeper logs
-
-## Supported Cluster Types
-
-- **Minikube** - Local development clusters
--  **OpenShift** - Red Hat OpenShift (3.x, 4.x)
--  **GKE** - Google Kubernetes Engine
--  **EKS** - Amazon Elastic Kubernetes Service
--  **AKS** - Azure Kubernetes Service
--  **Rancher** - Rancher-managed clusters
--  **Kind** - Kubernetes in Docker
--  **K3s** - Lightweight Kubernetes
-
-## File Structure
-
+### 1. Identify Cluster Context
 ```
-skills/infrastructure/cluster-policy-analyzer/
-├── SKILL.md              # Main skill file (Claude's instructions)
-└── README.md             # This file (team documentation)
+mcp__kubernetes__configuration_view(minified=true)
 ```
 
-## Advanced Usage
+### 2. Discover CRDs
+```
+mcp__kubernetes__resources_list(
+  apiVersion="apiextensions.k8s.io/v1",
+  kind="CustomResourceDefinition"
+)
+```
 
-### Custom Rego Patterns
+### 3. List Namespaces
+```
+mcp__kubernetes__namespaces_list()
+```
 
-The skill includes patterns for:
-- Required labels enforcement
-- Resource limits validation
-- Image registry restrictions
-- Replica count requirements
-- Security context enforcement
-- ConfigMap/Secret validation
-- Namespace labeling
+### 4. Analyze Gatekeeper (if installed)
 
-### OpenShift-Specific Features
+**ConstraintTemplates:**
+```
+mcp__kubernetes__resources_list(
+  apiVersion="templates.gatekeeper.sh/v1",
+  kind="ConstraintTemplate"
+)
+```
 
-When working with OpenShift, the skill can:
-- Analyze Security Context Constraints (SCCs)
-- Discover Routes and their configurations
-- Work with DeploymentConfigs
-- Understand ImageStreams
-- Handle Projects (OpenShift namespaces)
+**Constraints:**
+```
+mcp__kubernetes__resources_list(
+  apiVersion="constraints.gatekeeper.sh/v1beta1",
+  kind="K8sRequireNonRoot"
+)
+```
 
-### Testing Policies Locally
+### 5. Summarize Findings
 
-The skill guides Claude to:
-1. Extract Rego from ConstraintTemplates
-2. Create test input JSON
-3. Use OPA CLI for local validation
-4. Iterate before deploying to cluster
+Claude organizes the information into a clear summary including:
+- Overview (CRD count, namespaces, Gatekeeper status)
+- CRD summary by API group
+- Gatekeeper policy configuration
+- Violations summary
+- Key findings and recommendations
+
+## Output Format
+
+The skill produces structured analysis reports:
+
+```markdown
+## Cluster Analysis: minikube
+
+**Current Context:** minikube
+**Cluster Type:** Kubernetes
+
+### Overview
+- Total CRDs: 19
+- Total Namespaces: 8
+- Gatekeeper Installed: Yes
+
+### CRD Summary by API Group
+
+**gatekeeper.sh** (16 CRDs)
+- ConstraintTemplates, Constraints, Mutations
+
+**networking.k8s.io** (2 CRDs)
+- NetworkPolicies, Ingress
+
+### Gatekeeper Policy Configuration
+
+**ConstraintTemplates** (3 total)
+1. k8snocpulimits - Prevents CPU limits
+2. k8srequirenetworkpolicy - Requires NetworkPolicies
+3. teamlabel - Requires team label
+
+**Active Constraints** (2 total)
+1. no-cpu-limits (K8sNoCPULimits)
+   - Enforcement: deny
+   - Violations: 1
+
+2. teampods (TeamLabel)
+   - Enforcement: deny
+   - Violations: 8
+
+### Violations Summary
+Total: 9 violations
+
+By Constraint:
+1. teampods - 8 violations
+   - gatekeeper-system/Pod/gatekeeper-audit-xxx: Missing team label
+   - opa/Pod/opa-xxx: Missing team label
+   ...
+
+### Key Findings
+- 8 pods missing required team labels
+- 1 pod has CPU limits (best practice: avoid CPU limits)
+
+### Recommendations
+- Add team labels to system pods or exclude system namespaces
+- Review CPU limits configuration
+```
+
+## Supported Platforms
+
+- **Kubernetes** (vanilla, minikube, kind, k3s)
+- **OpenShift** 3.x and 4.x
+- **Cloud Platforms**: GKE, EKS, AKS
+- **Gatekeeper/OPA** 3.x
 
 ## Troubleshooting
 
 ### MCP Server Not Working
 
-**Symptom**: Claude can't execute kubectl commands
+**Symptom:** Claude can't execute Kubernetes commands
 
-**Solutions**:
-1. Verify `.claude/.mcp.json` exists in the project root
-2. Restart Claude Code session
-3. Check kubectl is in your PATH: `which kubectl`
-4. Test MCP manually: `npx -y kubernetes-mcp-server@latest --help`
+**Solutions:**
+1. Verify MCP installation:
+   ```bash
+   cat ~/.claude/mcp.json
+   ```
+2. Restart Claude Code
+3. Check kubectl is in PATH:
+   ```bash
+   which kubectl
+   ```
+4. Test manually:
+   ```bash
+   npx -y kubernetes-mcp-server@latest
+   ```
 
-### Cluster Access Issues
-
-**Symptom**: kubectl commands fail with connection errors
-
-**Solutions**:
-1. Verify cluster is running: `kubectl cluster-info`
-2. Check context is correct: `kubectl config current-context`
-3. Validate credentials haven't expired
-4. For OpenShift: `oc login` if needed
-
-### Skill Not Activating
-
-**Symptom**: Claude doesn't use the skill
-
-**Solutions**:
-1. Mention keywords: "analyze cluster", "CRDs", "Gatekeeper", "policy"
-2. Explicitly ask: "Use the cluster-policy-analyzer skill"
-3. Verify skill file exists: `ls skills/infrastructure/cluster-policy-analyzer/SKILL.md`
-
-## Sharing with Team
-
-### Via Git
-
-This skill is version-controlled and automatically shared when team members clone the repository:
-
-```bash
-git clone https://github.com/AIMikav/Skillset-library.git
-cd Skillset-library
-claude  # Skill is immediately available
-```
-
-### Customization
-
-Teams can customize the skill by editing `SKILL.md`:
-- Add company-specific policy patterns
-- Include environment-specific conventions
-- Document custom CRDs
-- Add team-specific workflows
-
-**After customization**, commit and push:
-
-```bash
-git add skills/infrastructure/cluster-policy-analyzer/SKILL.md
-git commit -m "Add custom policy patterns"
-git push
-```
-
-## Best Practices for Teams
-
-### 1. Maintain One Skill Version
-Keep the skill in a central repository and have team members pull updates.
-
-### 2. Document Custom Patterns
-As you create policies, add successful patterns to the skill for reuse.
-
-### 3. Version Control Everything
-Store ConstraintTemplates and Constraints in Git alongside the skill.
-
-### 4. Use Consistent Naming
-Establish naming conventions for policies (e.g., `k8s-require-*`, `company-*`).
-
-### 5. Test in Dev First
-Use dryrun mode in development before enforcing in production.
-
-### 6. Review Together
-Have policy changes reviewed like code changes.
-
-## Contributing
-
-To improve this skill:
-
-1. **Fork or branch** the repository
-2. **Edit** `skills/infrastructure/cluster-policy-analyzer/SKILL.md`
-3. **Test** your changes with Claude Code
-4. **Submit** a pull request or merge to main
-5. **Document** what you changed
-
-## Security Considerations
-
-- **Credentials**: The skill uses your local kubectl credentials
-- **Permissions**: Only accesses what your kubectl user can access
-- **Read-Mostly**: Primarily read operations; writes are explicit and shown
-- **Audit Trail**: All kubectl commands are visible in Claude's output
-
-## Support
-
-For issues or questions:
-- **Check logs**: Claude shows all kubectl commands it executes
-- **Review docs**: See [MCP_SETUP_GUIDE.md](../../../MCP_SETUP_GUIDE.md) and [TEAM_SHARING.md](../../../TEAM_SHARING.md)
-- **Team channel**: Post in your team's support channel
-- **File issue**: Create an issue in the [repository](https://github.com/AIMikav/Skillset-library/issues)
 
 ## Version History
 
-- **v1.0.0** (2026-01-08) - Initial release
-  - Real-time cluster discovery
-  - Gatekeeper policy analysis
-  - Rego generation patterns
-  - Multi-cluster support
+- **v2.0.0** (2026-01-11)
+  - Removed policy generation capabilities
+  - Focus on cluster analysis and summarization
+
+- **v1.0.0** (2025-10-02)
+  - Initial release
 
 ---
 
-**Maintained By**: Platform Team
-**License**: Internal Use
-**Last Updated**: 2026-01-08
+**License:** Internal Use
+**Last Updated:** 2026-01-11

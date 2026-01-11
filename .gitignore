@@ -24,3 +24,6 @@ build/
 # Temporary files
 *.tmp
 .cache/
+
+# Generated policy output
+skills/infrastructure/k8s-best-practices-validator/output/

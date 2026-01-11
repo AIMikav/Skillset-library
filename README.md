@@ -18,7 +18,10 @@ skillset-library/
 │   ├── development/               # Skills for code setup, testing, documentation
 │   │   └── github-setup.md
 │   └── infrastructure/            # Skills for Kubernetes, OpenShift, policy management
-│       └── cluster-policy-analyzer/
+│       ├── cluster-policy-analyzer/
+│       │   ├── SKILL.md
+│       │   └── README.md
+│       └── k8s-best-practices-validator/
 │           ├── SKILL.md
 │           └── README.md
 ├── README.md
@@ -143,6 +146,42 @@ Examples:
 
 ---
 
+#### k8s-best-practices-validator
+**Purpose:** Validates Kubernetes/OpenShift clusters against Red Hat best practices and generates OPA Gatekeeper policies
+
+**What it does:**
+- Analyzes cluster resources against 30+ curated Red Hat best practices
+- Identifies violations grouped by category (Security, Resource Management, Networking, Storage, Container Images, Pod Configuration, Workload Best Practices)
+- Generates ConstraintTemplates and Constraints for Gatekeeper
+- Saves policies as deployable YAML files organized by category
+- Provides detailed compliance reports and remediation guidance
+
+**Usage:**
+```
+Point Claude to validate your cluster
+Examples:
+- "Validate my cluster against Red Hat best practices"
+- "Check for compliance violations in app-prod namespace"
+- "Generate Gatekeeper policies for security best practices"
+- "Analyze resource management violations"
+```
+
+**Key Features:**
+- 30+ curated Red Hat best practices
+- 7 categories: Security, Resource Management, Networking, Storage, Container Images, Pod Configuration, Workload Best Practices
+- Uses Kubernetes MCP server for cluster analysis
+- Automated Rego policy generation
+- Dryrun-first approach for safe policy deployment
+- Category-based file organization
+- Complements cluster-policy-analyzer skill
+
+**Requirements:**
+- Kubernetes MCP server (configured in `.claude/.mcp.json`)
+- kubectl with cluster access
+- See skill README: [k8s-best-practices-validator/README.md](skills/infrastructure/k8s-best-practices-validator/README.md)
+
+---
+
 ## Creating Your Own Skills
 
 Each skill is a markdown file with the following structure:
@@ -237,7 +276,8 @@ Model Context Protocol enables Claude to interact with external systems (like Ku
 ## Roadmap
 
 Future skills under consideration:
-- ~~Kubernetes cluster policy analyzer~~  Added!
+- ~~Kubernetes cluster policy analyzer~~ ✅ Added!
+- ~~Kubernetes best practices validator~~ ✅ Added!
 - Terraform infrastructure analyzer
 - Helm chart generator
 - Prometheus metrics analyzer
